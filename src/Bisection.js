@@ -1,6 +1,27 @@
 import { useState } from "react"
 import { Button, Container, Form, Table } from "react-bootstrap";
 import { evaluate } from 'mathjs'
+import LINEDD from './line';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+  } from 'chart.js';
+  import { Line } from 'react-chartjs-2';
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
 
 const Sample =()=>{
     const print = () =>{
@@ -92,7 +113,43 @@ const Sample =()=>{
     const [valueXl, setValueXl] = useState([]);
     const [valueXm, setValueXm] = useState([]);
     const [valueXr, setValueXr] = useState([]);
+
+    const options = {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top' ,
+          },
+          title: {
+            display: true,
+            text: 'Chart.js Line Chart',
+          },
+        },
+      };
      
+      const dataA = {
+        labels : valueXm.map((x, index) => index ) ,
+        datasets: [
+          {
+            label: 'XM',
+            data: valueXm ,
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          },
+          {
+            label: 'XR',
+            data: valueXr,
+            borderColor: 'rgb(53, 162, 235)',
+            backgroundColor: 'rgba(53, 162, 235, 0.5)',
+          },
+          {
+            label: 'XL',
+            data: valueXl,
+            borderColor: 'rgb(186, 0, 244)',
+            backgroundColor: 'rgba(53, 162, 235, 0.5)',
+          },
+        ],
+      };
    
     const [html, setHtml] = useState(null);
     const [Equation,setEquation] = useState("(x^4)-13")
@@ -143,8 +200,14 @@ const Sample =()=>{
                 </Form>
                 <br></br>
                 <h5>Answer = {X.toPrecision(7)}</h5>
-                <Container>
+                <Container width = '5 px'>
                 {html}
+                <div style={{
+display: "inline-block",
+position: "relative",
+width: "50%" } } >
+                <Line options={options} data={dataA} />
+                </div>
                 </Container>
                
             </Container>
@@ -152,4 +215,5 @@ const Sample =()=>{
     )
 }
 
-export default Sample
+
+  export default Sample
