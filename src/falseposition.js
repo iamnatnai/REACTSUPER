@@ -23,7 +23,7 @@ import {
     Legend
   );
 
-const Bisect =()=>{
+const Falsep =()=>{
     const print = () =>{
         console.log(data)
         setValueIter(data.map((x)=>x.iteration));
@@ -61,51 +61,59 @@ const Bisect =()=>{
     const error =(xold, xnew)=> Math.abs((xnew-xold)/xnew)*100;
    
     const Calbisection = (xl, xr) => {
-        var xm,fXm,fXr,ea,scope;
+        var xi,fXl,fXr,ea,scope,fXi,xi,xstring;
         var iter = 0;
         var MAX = 50;
         const e = 0.00001;
         var obj={};
         do
         {
-            xm = (xl+xr)/2.0;
+            scope = {
+                x:xl,
+            }
+            fXl = evaluate(Equation, scope)
+
             scope = {
                 x:xr,
             }
-            fXr = evaluate(Equation, scope)
+            fXr = evaluate(Equation,scope)
 
+            xi = ((xl*fXr)-(xr*fXl))/(fXr-fXl);
             scope = {
-                x:xm,
+                x:xi,
             }
-            fXm = evaluate(Equation, scope)
+            fXi = evaluate(Equation, scope)
 
             iter ++;
-            if (fXm*fXr > 0)
+            let xstring = "X"+iter;
+            if (fXi*fXr > 0)
             {
-                ea = error(xr, xm);
+                ea = error(xr, xi);
                 obj = {
                     iteration:iter,
+                    Xn:xstring,
+                    Xi:xi,
                     Xl:xl,
-                    Xm:xm,
                     Xr:xr
                 }
                 data.push(obj)
-                xr = xm;
+                xr = xi;
             }
-            else if (fXm*fXr < 0)
+            else if (fXi*fXr < 0)
             {
-                ea = error(xl, xm);
+                ea = error(xl, xi);
                 obj = {
                     iteration:iter,
+                    Xn:xstring,
+                    Xi:xi,
                     Xl:xl,
-                    Xm:xm,
                     Xr:xr
                 }
                 data.push(obj)
-                xl = xm;
+                xl = xi;
             }
         }while(ea>e && iter<MAX)
-        setX(xm)
+        setX(xi)
     }
 
     const data =[];
@@ -187,15 +195,12 @@ const Bisect =()=>{
             <Container>
                 <Form >
                     <Form.Group className="mb-3">
-                    <Form.Label>
-                    Input f(x)  </Form.Label>
-                    <input type="text" id="equation" value={Equation} onChange={inputEquation} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
-                    <Form.Label><br/>
-                    Input XL  </Form.Label>
-                    <input type="number" id="XL" onChange={inputXL} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
-                    <Form.Label><br/>
-                    Input XR  </Form.Label>
-                    <input type="number" id="XR" onChange={inputXR} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
+                    <Form.Label>Input f(x)</Form.Label>
+                        <input type="text" id="equation" value={Equation} onChange={inputEquation} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
+                        <Form.Label>Input XL</Form.Label>
+                        <input type="number" id="XL" onChange={inputXL} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
+                        <Form.Label>Input XR</Form.Label>
+                        <input type="number" id="XR" onChange={inputXR} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
                     </Form.Group>
                     <Button variant="dark" onClick={calculateRoot}>
                         Calculate
@@ -203,7 +208,7 @@ const Bisect =()=>{
                 </Form>
                 <br></br>
                 <h5>Answer = {X.toPrecision(7)}</h5>
-                <Container width = '10 px'>
+                <Container width = '5 px'>
                 {html}
                 <div style={{
 display: "inline-block",
@@ -219,4 +224,4 @@ width: "50%" } } >
 }
 
 
-  export default Bisect
+  export default Falsep
