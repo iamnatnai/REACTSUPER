@@ -171,7 +171,6 @@ const Bisect =()=>{
         console.log(event.target.value)
         setXR(event.target.value)
     }
-
     const calculateRoot = () =>{
         const xlnum = parseFloat(XL)
         const xrnum = parseFloat(XR)
@@ -186,6 +185,7 @@ const Bisect =()=>{
     return (
             <Container>
                 <Form >
+                    <br/><br/><br/><br/><br/>
                     <Form.Group className="mb-3">
                     <Form.Label>
                     Input f(x)  </Form.Label>
@@ -212,7 +212,6 @@ width: "50%" } } >
                 <Line options={options} data={dataA} />
                 </div>
                 </Container>
-               
             </Container>
            
     )

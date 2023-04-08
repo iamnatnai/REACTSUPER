@@ -23,7 +23,7 @@ import {
     Legend
   );
 
-const Falsep =()=>{
+const FalsePosition =()=>{
     const print = () =>{
         console.log(data)
         setValueIter(data.map((x)=>x.iteration));
@@ -60,60 +60,64 @@ const Falsep =()=>{
 
     const error =(xold, xnew)=> Math.abs((xnew-xold)/xnew)*100;
    
-    const Calbisection = (xl, xr) => {
-        var xi,fXl,fXr,ea,scope,fXi,xi,xstring;
+    const Calfalseposition = (xl, xr) => {
+        var xm,fXm,fXr,fXl,ea,scope;
         var iter = 0;
-        var MAX = 50;
+        var MAX = 200;
         const e = 0.00001;
         var obj={};
+        var err=[];
         do
         {
+            scope = {
+                x:xr,
+            }
+            fXr = evaluate(Equation, scope)
             scope = {
                 x:xl,
             }
             fXl = evaluate(Equation, scope)
-
+            xm = xr-(xl-xr)*fXr/(fXl-fXr);
             scope = {
-                x:xr,
+                x:xm,
             }
-            fXr = evaluate(Equation,scope)
-
-            xi = ((xl*fXr)-(xr*fXl))/(fXr-fXl);
-            scope = {
-                x:xi,
-            }
-            fXi = evaluate(Equation, scope)
+            
+            
+            fXm = evaluate(Equation, scope)
 
             iter ++;
-            let xstring = "X"+iter;
-            if (fXi*fXr > 0)
+            if (fXm*fXr > 0)
             {
-                ea = error(xr, xi);
+                ea = error(xr, xm);
                 obj = {
                     iteration:iter,
-                    Xn:xstring,
-                    Xi:xi,
                     Xl:xl,
+                    Xm:xm,
                     Xr:xr
                 }
                 data.push(obj)
-                xr = xi;
+                xr = xm;
             }
-            else if (fXi*fXr < 0)
+            else if (fXm*fXr < 0)
             {
-                ea = error(xl, xi);
+                ea = error(xl, xm);
                 obj = {
                     iteration:iter,
-                    Xn:xstring,
-                    Xi:xi,
                     Xl:xl,
+                    Xm:xm,
                     Xr:xr
                 }
                 data.push(obj)
-                xl = xi;
+                xl = xm;
             }
+            console.log(ea);
+            err.push(ea)
         }while(ea>e && iter<MAX)
-        setX(xi)
+        setX(xm)
+        setValueerror(err);
+        console.log(valueerror);
+        console.log(err);
+       
     }
 
     const data =[];
@@ -121,6 +125,7 @@ const Falsep =()=>{
     const [valueXl, setValueXl] = useState([]);
     const [valueXm, setValueXm] = useState([]);
     const [valueXr, setValueXr] = useState([]);
+    const [valueerror,setValueerror] = useState([]);
 
     const options = {
         responsive: true,
@@ -139,8 +144,8 @@ const Falsep =()=>{
         labels : valueXm.map((x, index) => index ) ,
         datasets: [
           {
-            label: 'XM',
-            data: valueXm ,
+            label: 'error',
+            data: valueerror ,
             borderColor: 'rgb(255, 99, 132)',
             backgroundColor: 'rgba(255, 99, 132, 0.5)',
           },
@@ -155,6 +160,12 @@ const Falsep =()=>{
             data: valueXl,
             borderColor: 'rgb(186, 0, 244)',
             backgroundColor: 'rgba(53, 162, 235, 0.5)',
+          },
+          {
+            label: 'XM',
+            data: valueXm,
+            borderColor: 'rgb(186, 0, 244)',
+            backgroundColor: 'rgba(255, 165, 0, 0.5)',
           },
         ],
       };
@@ -179,11 +190,10 @@ const Falsep =()=>{
         console.log(event.target.value)
         setXR(event.target.value)
     }
-
     const calculateRoot = () =>{
         const xlnum = parseFloat(XL)
         const xrnum = parseFloat(XR)
-        Calbisection(xlnum,xrnum);
+        Calfalseposition(xlnum,xrnum);
      
         setHtml(print());
            
@@ -194,13 +204,17 @@ const Falsep =()=>{
     return (
             <Container>
                 <Form >
+                    <br/><br/><br/><br/><br/>
                     <Form.Group className="mb-3">
-                    <Form.Label>Input f(x)</Form.Label>
-                        <input type="text" id="equation" value={Equation} onChange={inputEquation} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
-                        <Form.Label>Input XL</Form.Label>
-                        <input type="number" id="XL" onChange={inputXL} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
-                        <Form.Label>Input XR</Form.Label>
-                        <input type="number" id="XR" onChange={inputXR} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
+                    <Form.Label>
+                    Input f(x)  </Form.Label>
+                    <input type="text" id="equation" value={Equation} onChange={inputEquation} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
+                    <Form.Label><br/>
+                    Input XL  </Form.Label>
+                    <input type="number" id="XL" onChange={inputXL} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
+                    <Form.Label><br/>
+                    Input XR  </Form.Label>
+                    <input type="number" id="XR" onChange={inputXR} style={{width:"20%", margin:"0 auto"}} className="form-control"></input>
                     </Form.Group>
                     <Button variant="dark" onClick={calculateRoot}>
                         Calculate
@@ -208,7 +222,7 @@ const Falsep =()=>{
                 </Form>
                 <br></br>
                 <h5>Answer = {X.toPrecision(7)}</h5>
-                <Container width = '5 px'>
+                <Container width = '10 px'>
                 {html}
                 <div style={{
 display: "inline-block",
@@ -217,11 +231,10 @@ width: "50%" } } >
                 <Line options={options} data={dataA} />
                 </div>
                 </Container>
-               
             </Container>
            
     )
 }
 
 
-  export default Falsep
+  export default FalsePosition
